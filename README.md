@@ -29,9 +29,67 @@ Authorization: Bearer {token}
 ------------------------------
 
 
+GET https://easycuteg.com/users/home/home.php
+
+GET https://easycuteg.com/users/home/home.php?lat=30.0444&lng=31.2357
 
 
+res
 
+{
+"status": "success",
+"popsalons": [
+{
+"id": 1,
+"name": "Luxury Salon & Spa",
+"email": "info@luxurysalon.com",
+"password": "********", // This should be removed from API responses
+"gender": "male",
+"phone": "+20123456789",
+"rate": 4.8,
+"chairs": 5,
+"category_id": 1,
+"subscription": 1,
+"image": "salon1.jpg",
+"approve": 1,
+"country": "Egypt",
+"city": "Cairo",
+"address": "Downtown, 123 Main St",
+"classification": "luxury",
+"created_at": "2023-01-15T10:00:00Z",
+"updated_at": "2023-04-16T14:30:00Z"
+},
+{
+"id": 2,
+"name": "Economic Cuts",
+"email": "info@economiccuts.com",
+"password": "********", // This should be removed from API responses
+"gender": "female",
+"phone": "+20123456780",
+"rate": 4.5,
+"chairs": 3,
+"category_id": 2,
+"subscription": 1,
+"image": "salon2.jpg",
+"approve": 1,
+"country": "Egypt",
+"city": "Alexandria",
+"address": "City Center, 456 High St",
+"classification": "economic",
+"created_at": "2023-02-20T09:15:00Z",
+"updated_at": "2023-04-10T11:45:00Z"
+}
+],
+"nearsalons": [
+// Similar structure to popsalons
+],
+"newsalons": [
+// Similar structure to popsalons
+]
+}
+
+
+------------------------------
 
 
 

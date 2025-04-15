@@ -44,6 +44,7 @@ class MainView extends StatelessWidget {
             builder: (controller) {
               return Column(
                 children: [
+                  // Header with user profile and search
                   Padding(
                     padding: EdgeInsets.only(
                       left: 38.w,
@@ -55,6 +56,8 @@ class MainView extends StatelessWidget {
                     ),
                   ),
                   SizedBox(height: Dimensions.height10),
+
+                  // Search bar
                   CustomButtonSearch(
                     onPressed: () {
                       Get.offNamed(AppRoute.searchSalon);
@@ -63,18 +66,22 @@ class MainView extends StatelessWidget {
                     hintText: "Search".tr,
                   ),
 
-                  // Add the salon classification filter widget
+                  // Salon classification filter
                   const SalonClassificationFilter(),
 
                   SizedBox(height: Dimensions.height10.h),
+
+                  // Main content based on data status
                   HandlingDataView(
                     statusRequest: controller.statusRequest,
                     widget: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Featured salons or carousel
                         controller.popSalons.isEmpty
                             ? Column(
                           children: [
+                            // Promotional carousel when no featured salons
                             SizedBox(
                               width: 364.w,
                               height: 225.h,
@@ -84,8 +91,7 @@ class MainView extends StatelessWidget {
                                   enlargeCenterPage: false,
                                   height: 225.h,
                                   autoPlay: true,
-                                  autoPlayAnimationDuration:
-                                  Durations.long1,
+                                  autoPlayAnimationDuration: Durations.long1,
                                   onPageChanged: (index, reason) {
                                     controllerX.updateIndex(index);
                                   },
@@ -94,20 +100,17 @@ class MainView extends StatelessWidget {
                                   return Builder(
                                     builder: (BuildContext context) {
                                       return Container(
-                                        margin: EdgeInsetsDirectional
-                                            .symmetric(horizontal: 5.w),
+                                        margin: EdgeInsetsDirectional.symmetric(horizontal: 5.w),
                                         width: 364.w,
                                         height: 100.h,
                                         decoration: BoxDecoration(
                                           border: Border.all(
                                               color: Colors.black,
                                               width: 1.w),
-                                          borderRadius:
-                                          BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(8),
                                         ),
                                         child: ClipRRect(
-                                          borderRadius:
-                                          BorderRadius.circular(8),
+                                          borderRadius: BorderRadius.circular(8),
                                           child: Image.asset(
                                             imagePath,
                                             fit: BoxFit.fill,
@@ -122,34 +125,29 @@ class MainView extends StatelessWidget {
                             SizedBox(height: Dimensions.height10.h),
                             Obx(
                                   () => Row(
-                                mainAxisAlignment:
-                                MainAxisAlignment.center,
-                                children: List.generate(imageList.length,
-                                        (index) {
-                                      return Container(
-                                        width: 8.w,
-                                        height: 8.h,
-                                        margin: EdgeInsets.symmetric(
-                                            horizontal: 4.w),
-                                        decoration: BoxDecoration(
-                                          color: controllerX
-                                              .currentIndex.value ==
-                                              index
-                                              ? AppColor.iconColor1
-                                              : AppColor.backgroundicons2,
-                                          shape: BoxShape.circle,
-                                        ),
-                                      );
-                                    }),
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: List.generate(imageList.length, (index) {
+                                  return Container(
+                                    width: 8.w,
+                                    height: 8.h,
+                                    margin: EdgeInsets.symmetric(horizontal: 4.w),
+                                    decoration: BoxDecoration(
+                                      color: controllerX.currentIndex.value == index
+                                          ? AppColor.iconColor1
+                                          : AppColor.backgroundicons2,
+                                      shape: BoxShape.circle,
+                                    ),
+                                  );
+                                }),
                               ),
                             ),
                           ],
                         )
-                            : SlidingPopularSalons(
-                            popularSalon: controller.popSalons),
+                            : SlidingPopularSalons(popularSalon: controller.popSalons),
 
                         SizedBox(height: 10.h),
 
+                        // Nearby salons section
                         NewestText(
                           title: 'Near for you'.tr,
                         ),
@@ -160,14 +158,13 @@ class MainView extends StatelessWidget {
                           ),
                           child: SmallText(
                             maxline: 1,
-                            text:
-                            "Don't waste your time and book at your preference"
-                                .tr,
+                            text: "Don't waste your time and book at your preference".tr,
                             color: AppColor.titleColor,
                             size: 12.5.sp,
                           ),
                         ),
 
+                        // Listing nearby salons based on login status
                         controller.isLoggedIn
                             ? ListView.builder(
                             shrinkWrap: true,

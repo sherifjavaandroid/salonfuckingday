@@ -48,9 +48,9 @@ class HomeControllerImp extends HomeController {
 
   final HomeData homeData = HomeData(Get.find());
   StatusRequest statusRequest = StatusRequest.success;
-  List<SalonModel> popSalons = [];
-  List<SalonModel> nearSalons = [];
-  List<SalonModel> newSalons = [];
+  List<SalonModel> popSalons = []; // Featured/Popular salons
+  List<SalonModel> nearSalons = []; // Nearby salons
+  List<SalonModel> newSalons = []; // New salons
 
   @override
   void initialData() {
@@ -93,22 +93,32 @@ class HomeControllerImp extends HomeController {
 
       if (statusRequest == StatusRequest.success) {
         if (response['status'] == 'success') {
+          // Parse nearby salons
           _allNearSalons = (response['nearsalons'] ?? []).map<SalonModel>((element) {
             return SalonModel.fromJson(element as Map<String, dynamic>);
           }).toList();
 
+          // Parse featured/popular salons
           _allPopSalons = (response['popsalons'] ?? []).map<SalonModel>((element) {
             return SalonModel.fromJson(element as Map<String, dynamic>);
           }).toList();
 
+          // Parse new salons
           _allNewSalons = (response['newsalons'] ?? []).map<SalonModel>((element) {
             return SalonModel.fromJson(element as Map<String, dynamic>);
           }).toList();
 
           // Initialize displayed lists with all salons
           nearSalons = List.from(_allNearSalons);
+
+          // Sort popular salons by rating to ensure highest rated appear first
+          _allPopSalons.sort((a, b) => (b.rate ?? 0).compareTo(a.rate ?? 0));
           popSalons = List.from(_allPopSalons);
+
           newSalons = List.from(_allNewSalons);
+
+          // Make sure to save the top salons to local storage for offline display
+          _saveTopSalonsToLocalStorage();
         } else {
           Get.snackbar(
             'Warning'.tr,
@@ -130,8 +140,29 @@ class HomeControllerImp extends HomeController {
       if (kDebugMode) {
         print("Error fetching salons: $e");
       }
+
+      // Try to load cached salons data
+      _loadCachedSalonsData();
     } finally {
       update();
+    }
+  }
+
+  // Save top salons to local storage for offline access
+  void _saveTopSalonsToLocalStorage() {
+    // Implementation would depend on the caching strategy
+    // This is a placeholder for the actual implementation
+    if (kDebugMode) {
+      print("Saving ${popSalons.length} featured salons to local storage");
+    }
+  }
+
+  // Load cached salons data when network request fails
+  void _loadCachedSalonsData() {
+    // Implementation would depend on the caching strategy
+    // This is a placeholder for the actual implementation
+    if (kDebugMode) {
+      print("Attempting to load cached salons data");
     }
   }
 
