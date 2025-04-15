@@ -20,7 +20,7 @@ class ProfileControllerImp extends ProfileController
   int? id;
 
   ProfileData profileData = ProfileData(Get.find());
-  StatusRequest statusRequest = StatusRequest.success;
+  StatusRequest statusRequest = StatusRequest.loading;
   ProfileModel profile = ProfileModel();
   List<FavoriteModel> favorites = [];
 
@@ -31,6 +31,7 @@ class ProfileControllerImp extends ProfileController
   void onInit() {
     super.onInit();
     initialData();
+    // Create tab controller after the dependent data is loaded
     tabController = TabController(length: 2, vsync: this)
       ..addListener(() {
         selectedIndex = tabController!.index;
@@ -41,30 +42,69 @@ class ProfileControllerImp extends ProfileController
 
   void initialData() {
     id = myServices.sharedPreferences.getInt('id');
+    // Set initial values to avoid null checks
+    profile = ProfileModel(
+        name: "Guest",
+        email: "guest@example.com",
+        country: "",
+        city: "",
+        address: "",
+        phone: "",
+        image: ""
+    );
   }
 
   @override
   getData() async {
-    statusRequest = StatusRequest.loading;
-    update();
-    var response = await profileData.postData(id?.toString() ?? '');
-    statusRequest = handlingData(response);
-    if (statusRequest == StatusRequest.success) {
-      if (response['status'] == 'success') {
-        var data = response['profile'] as Map<String, dynamic>;
-        profile = ProfileModel.fromJson(data);
-        favorites = FavoriteModel.fromList(
-            List<Map<String, dynamic>>.from(response['favorites']));
-      } else {
-        Get.snackbar(
-          'Warning'.tr,
-          'There is no data'.tr,
-          snackPosition: SnackPosition.TOP,
-          colorText: Colors.red,
-        );
-        statusRequest = StatusRequest.failure;
-      }
+    if (id == null) {
+      // Handle guest mode gracefully
+      statusRequest = StatusRequest.success;
+      update();
+      return;
     }
+
+    try {
+      statusRequest = StatusRequest.loading;
+      update();
+
+      var response = await profileData.postData(id.toString());
+      statusRequest = handlingData(response);
+
+      if (statusRequest == StatusRequest.success) {
+        if (response['status'] == 'success') {
+          // Parse profile data
+          if (response['profile'] != null) {
+            var data = response['profile'] as Map<String, dynamic>;
+            profile = ProfileModel.fromJson(data);
+          }
+
+          // Parse favorites data with error handling
+          if (response['favorites'] != null && response['favorites'] is List) {
+            try {
+              favorites = FavoriteModel.fromList(
+                  List<Map<String, dynamic>>.from(response['favorites']));
+            } catch (e) {
+              print('Error parsing favorites: $e');
+              favorites = [];
+            }
+          } else {
+            favorites = [];
+          }
+        } else {
+          Get.snackbar(
+            'Warning'.tr,
+            'Failed to load profile data'.tr,
+            snackPosition: SnackPosition.TOP,
+            colorText: Colors.red,
+          );
+          statusRequest = StatusRequest.failure;
+        }
+      }
+    } catch (e) {
+      print('Error in profile getData: $e');
+      statusRequest = StatusRequest.serverException;
+    }
+
     update();
   }
 
@@ -89,25 +129,50 @@ class ProfileControllerImp extends ProfileController
         TextButton(
           onPressed: () async {
             Get.back();
-            statusRequest = StatusRequest.loading;
-            update();
-            var response = await profileData.deleteData(
-              id?.toString() ?? '',
-              profile.image ?? '',
-            );
-            statusRequest = handlingData(response);
-            if (statusRequest == StatusRequest.success) {
-              if (response['status'] == 'success') {
-                logout();
+            try {
+              statusRequest = StatusRequest.loading;
+              update();
+
+              // Only attempt to delete if we have a valid ID and image
+              if (id != null) {
+                var response = await profileData.deleteData(
+                  id.toString(),
+                  profile.image ?? '',
+                );
+
+                statusRequest = handlingData(response);
+
+                if (statusRequest == StatusRequest.success) {
+                  if (response['status'] == 'success') {
+                    logout();
+                  } else {
+                    Get.snackbar(
+                      'Warning'.tr,
+                      'Failed to Delete Account, Try Again'.tr,
+                      snackPosition: SnackPosition.TOP,
+                      colorText: Colors.red,
+                    );
+                    statusRequest = StatusRequest.failure;
+                  }
+                }
               } else {
                 Get.snackbar(
                   'Warning'.tr,
-                  'Failed to Delete Account, Try Again'.tr,
+                  'Account ID not found'.tr,
                   snackPosition: SnackPosition.TOP,
                   colorText: Colors.red,
                 );
                 statusRequest = StatusRequest.failure;
               }
+            } catch (e) {
+              print('Error in deleteAccount: $e');
+              statusRequest = StatusRequest.serverException;
+              Get.snackbar(
+                'Error'.tr,
+                'Failed to connect to server'.tr,
+                snackPosition: SnackPosition.TOP,
+                colorText: Colors.red,
+              );
             }
             update();
           },

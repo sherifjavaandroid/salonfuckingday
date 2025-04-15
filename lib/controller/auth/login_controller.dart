@@ -20,7 +20,7 @@ class LoginControllerImp extends LoginController {
   StatusRequest statusRequest = StatusRequest.success;
   bool isShowPassword = true;
   MyServices myServices = Get.find();
-
+  bool _isNavigating = false;
   showPassword() {
     isShowPassword = !isShowPassword;
     update();
@@ -33,8 +33,17 @@ class LoginControllerImp extends LoginController {
 
   @override
   goToSignUp() {
-    Get.offNamed(AppRoute.signUp);
+    if (_isNavigating) return; // ignore if a navigation is already in progress
+    _isNavigating = true;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Get.offNamed(AppRoute.signUp);
+      // Optionally reset _isNavigating after a delay if necessary
+      Future.delayed(const Duration(milliseconds: 300), () {
+        _isNavigating = false;
+      });
+    });
   }
+
 
   @override
   login() async {
