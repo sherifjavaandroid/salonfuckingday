@@ -4,20 +4,14 @@ import 'package:easycut/core/constant/color.dart';
 import 'package:easycut/core/constant/dimensions.dart';
 import 'package:easycut/core/constant/routes.dart';
 import 'package:easycut/core/shared/widgets/small_text.dart';
+import 'package:easycut/helper/qrcode_helper.dart';
+import 'package:easycut/linkapi.dart';
 import 'package:easycut/view/widget/main/show_products_salon.dart';
-import 'package:easycut/view/widget/main/stack_image_detail.dart';
 import 'package:easycut/view/widget/main/stack_salon_details.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-// "services": controller.services,
-// "products": productController
-//     .selectedIndices
-//     .toList(),
-//         "salon": controller.salon,
-// "services": controller.selectedServices,
-//  "products": controller.selectedProducts,
 class SalonDetails extends StatelessWidget {
   const SalonDetails({super.key});
 
@@ -40,105 +34,162 @@ class SalonDetails extends StatelessWidget {
                   Expanded(
                     child: Stack(
                       children: [
-                        StackImageDetail(
-                            salonImage: "${controller.salon.image}"),
+                        // Salon Image
                         Positioned(
-                          left: Dimensions.width20.w,
-                          right: Dimensions.width20.w,
+                          left: 0,
+                          right: 0,
+                          top: 29.h,
+                          child: SizedBox(
+                            width: double.infinity,
+                            height: 328.h,
+                            child: Padding(
+                              padding: EdgeInsets.only(bottom: 14.h),
+                              child: Image.network(
+                                "${AppLink.imageSalons}${controller.salon.image}",
+                                fit: BoxFit.fill,
+                              ),
+                            ),
+                          ),
+                        ),
+
+                        // Top navigation buttons including share and QR
+                        Positioned(
+                          left: 0,
+                          right: 0,
                           top: Dimensions.height45.h,
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                            children: [
-                              Padding(
-                                padding: const EdgeInsets.all(10),
-                                child: Container(
+                          child: Padding(
+                            padding: EdgeInsets.symmetric(horizontal: 20.w),
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                              children: [
+                                // Back button
+                                Container(
                                   height: 36.h,
                                   width: 36.w,
                                   decoration: BoxDecoration(
-                                      color: AppColor.unselectedservies,
-                                      borderRadius: BorderRadius.circular(10.r),
-                                      border: Border.all(
-                                          width: 1.5,
-                                          color: AppColor.backgroundicons)),
+                                    color: AppColor.unselectedservies,
+                                    borderRadius: BorderRadius.circular(10.r),
+                                    border: Border.all(
+                                        width: 1.5,
+                                        color: AppColor.backgroundicons
+                                    ),
+                                  ),
                                   child: IconButton(
                                     icon: const ImageIcon(
                                       color: AppColor.backgroundicons,
-                                      AssetImage(
-                                          'assets/images/icon/back_arrow.png'),
+                                      AssetImage('assets/images/icon/back_arrow.png'),
                                     ),
                                     onPressed: () {
                                       Get.offNamed(AppRoute.home);
                                     },
                                   ),
                                 ),
-                              ),
-                              controller.isLoggedIn
-                                  ? GestureDetector(
-                                      onTap: () {
-                                        controller.changeFavoriteState();
-                                      },
-                                      child: Padding(
-                                        padding: const EdgeInsets.all(8.0),
-                                        child: Align(
-                                          alignment: Alignment.topRight,
-                                          child: Container(
-                                            width: 33.w,
-                                            height: 33.h,
-                                            decoration: const BoxDecoration(
-                                              color: Colors
-                                                  .white, // Change to your preferred background color
-                                              shape: BoxShape
-                                                  .circle, // You can change it to BoxShape.rectangle if needed
-                                              boxShadow: [
-                                                BoxShadow(
-                                                  color: Colors.black26,
-                                                  blurRadius: 4.0,
-                                                  spreadRadius: 1,
-                                                ),
-                                              ],
-                                            ),
-                                            child: controller.isFavorite!
-                                                ? Image.asset(
-                                                    'assets/images/icon/Vector.png', // Ensure this is a valid image path string
-                                                    height: 22
-                                                        .h, // Adjust size as needed
-                                                    width: 22.w,
-                                                  )
-                                                : Image.asset(
-                                                    'assets/images/icon/heart.png', // Ensure this is a valid image path string
-                                                    height: 22
-                                                        .h, // Adjust size as needed
-                                                    width: 22.w,
-                                                  ),
-                                            // child: AppIcon(
-                                            //             icon: controller.isFavorite!
-                                            //                 ? Icons.favorite
-                                            //                 : Icons.favorite_border,
-                                            //             iconColor: controller.isFavorite!
-                                            //                 ? Colors.red
-                                            //                 : Colors.grey,
-                                            //           ),
+
+                                // Action buttons (QR, Share, Favorite)
+                                Row(
+                                  children: [
+                                    // QR Code button
+                                    Container(
+                                      height: 36.h,
+                                      width: 36.w,
+                                      decoration: BoxDecoration(
+                                        color: AppColor.unselectedservies,
+                                        borderRadius: BorderRadius.circular(10.r),
+                                        border: Border.all(
+                                            width: 1.5,
+                                            color: AppColor.backgroundicons
+                                        ),
+                                      ),
+                                      child: IconButton(
+                                        iconSize: 18.sp,
+                                        icon: const Icon(
+                                          Icons.qr_code,
+                                          color: AppColor.backgroundicons,
+                                        ),
+                                        onPressed: () {
+                                          QRCodeHelper.showQRCodeDialog(
+                                            context,
+                                            controller.salon.id ?? 0,
+                                            controller.salon.name ?? "Salon",
+                                          );
+                                        },
+                                      ),
+                                    ),
+
+                                    // Space between buttons
+                                    SizedBox(width: 12.w),
+
+                                    // Share button
+                                    Container(
+                                      height: 36.h,
+                                      width: 36.w,
+                                      decoration: BoxDecoration(
+                                        color: AppColor.unselectedservies,
+                                        borderRadius: BorderRadius.circular(10.r),
+                                        border: Border.all(
+                                            width: 1.5,
+                                            color: AppColor.backgroundicons
+                                        ),
+                                      ),
+                                      child: IconButton(
+                                        iconSize: 18.sp,
+                                        icon: const Icon(
+                                          Icons.share,
+                                          color: AppColor.backgroundicons,
+                                        ),
+                                        onPressed: () {
+                                          QRCodeHelper.shareSalon(
+                                            context,
+                                            controller.salon.id ?? 0,
+                                            controller.salon.name ?? "Salon",
+                                          );
+                                        },
+                                      ),
+                                    ),
+
+                                    // Space between buttons
+                                    SizedBox(width: 12.w),
+
+                                    // Favorite button (if logged in)
+                                    if (controller.isLoggedIn)
+                                      GestureDetector(
+                                        onTap: () {
+                                          controller.changeFavoriteState();
+                                        },
+                                        child: Container(
+                                          width: 33.w,
+                                          height: 33.h,
+                                          decoration: const BoxDecoration(
+                                            color: Colors.white,
+                                            shape: BoxShape.circle,
+                                            boxShadow: [
+                                              BoxShadow(
+                                                color: Colors.black26,
+                                                blurRadius: 4.0,
+                                                spreadRadius: 1,
+                                              ),
+                                            ],
+                                          ),
+                                          child: controller.isFavorite!
+                                              ? Image.asset(
+                                            'assets/images/icon/Vector.png',
+                                            height: 22.h,
+                                            width: 22.w,
+                                          )
+                                              : Image.asset(
+                                            'assets/images/icon/heart.png',
+                                            height: 22.h,
+                                            width: 22.w,
                                           ),
                                         ),
                                       ),
-                                      //  SizedBox(
-                                      //   height: 33.h,
-                                      //   width: 33.w,
-                                      //   child: Container(
-                                      //     decoration: BoxDecoration(
-                                      //         color: AppColor.backgroundButton),
-                                      //     child: controller.isFavorite!
-                                      //         ? ImageIcon(AssetImage(
-                                      //             'assets/images/icon/heart.png'))
-                                      //         : ImageIcon(AssetImage(
-                                      //             'assets/images/icon/Vector.png')),
-                                      //   ),
-                                      // ),
-                                    )
-                                  : Container(),
-                            ],
+                                  ],
+                                ),
+                              ],
+                            ),
                           ),
                         ),
+
                         StackSalonDetails(
                           salon: controller.salon,
                           services: controller.services,
@@ -152,7 +203,7 @@ class SalonDetails extends StatelessWidget {
                     width: 406.w,
                     height: 51.h,
                     margin:
-                        const EdgeInsets.only(left: 17, bottom: 10, right: 17),
+                    const EdgeInsets.only(left: 17, bottom: 10, right: 17),
                     decoration: BoxDecoration(
                       color: hasSelection
                           ? AppColor.selectedColor
@@ -170,9 +221,6 @@ class SalonDetails extends StatelessWidget {
                           _showLoginBottomSheet(context);
                         }
                       },
-                      // "services": serviceController
-                      //     .selectedIndices
-                      //     .toList(),
                       child: SmallText(
                         size: 20.sp,
                         text: "Book Now".tr,

@@ -27,3 +27,32 @@ Authorization: Bearer {token}
 
 
 ------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+solve errors build
+edit profile data done
+solve navigation
+solve registeration
+home cats
+
+
+و رابط مشاركة لكل صالون Code QR 3.
+يحتوي على رابط الصالون QR توليد كود ●
+زر "مشاركة الصالون" يمكن المستخدم من مشاركة الرابط على واتساب / فيسبوك .. إلخ ●
+
