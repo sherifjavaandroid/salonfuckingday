@@ -5,11 +5,13 @@ import 'package:easycut/core/constant/dimensions.dart';
 import 'package:easycut/core/constant/routes.dart';
 import 'package:easycut/view/widget/home/cart_profile.dart';
 import 'package:easycut/view/widget/profile/about_profile.dart';
+import 'package:easycut/view/widget/profile/edit_profile_button.dart';
 import 'package:easycut/view/widget/profile/profile_favorite_salons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:easycut/linkapi.dart';
+
 class ProfileView extends StatelessWidget {
   const ProfileView({super.key});
 
@@ -21,7 +23,7 @@ class ProfileView extends StatelessWidget {
       onWillPop: () async {
         Navigator.of(context).pushNamedAndRemoveUntil(
           AppRoute.home,
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
         return false;
       },
@@ -46,10 +48,15 @@ class ProfileView extends StatelessWidget {
                       },
                     ),
 
-                    SizedBox(height: Dimensions.height15),
+                    // Add Edit Profile Button
+                    SizedBox(height: 10.h),
+                    Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 10.w),
+                      child: const EditProfileButton(),
+                    ),
+                    SizedBox(height: 10.h),
 
                     // Custom Tabs
-
                     Container(
                       width: double.infinity,
                       height: 41,
@@ -109,24 +116,6 @@ class ProfileView extends StatelessWidget {
                               ),
                             ),
                           ),
-                          // Row(
-                          //   children: [
-                          //     GestureDetector(
-                          //       onTap: () {
-                          //         controller.deleteAccount();
-                          //       },
-                          //       child: BigText(
-                          //         text: "Delete Account".tr,
-                          //         color: Colors.red,
-                          //         size: Dimensions.font20,
-                          //       ),
-                          //     ),
-                          //     SizedBox(width: 120.w),
-                          //     const LanguageSwitcher(),
-                          //   ],
-                          // ),
-
-//Adding LanguageSwitcher for language change
                         ],
                       ),
                     ),
@@ -141,6 +130,10 @@ class ProfileView extends StatelessWidget {
                               AboutProfile(
                                 email: controller.profile.email ?? "",
                                 country: controller.profile.country ?? "",
+                                gender: controller.profile.gender,
+                                city: controller.profile.city,
+                                address: controller.profile.address,
+                                phone: controller.profile.phone,
                               ),
                               ProfileFavoriteSalons(
                                 favorites: controller.favorites,

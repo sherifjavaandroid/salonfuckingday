@@ -32,4 +32,22 @@ class AppLink {
   static const String viewSalonRates = "$server2/api/salons";
   static const String feedbackSalonRates = "$server2/api/ratings";
   static const String searchSalon = "$server2/api/test";
+
+
+
+
+
+
+
+
+
+
+
+  // Profile update endpoints
+  static const String updateProfile = "$server/users/profile/update.php";
+  static const String updateProfileWithImage = "$server/users/profile/update_with_image.php";
+
+
+
+
 }

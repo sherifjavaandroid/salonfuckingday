@@ -8,6 +8,7 @@ import 'package:easycut/view/screen/auth/login.dart';
 import 'package:easycut/view/screen/auth/signup.dart';
 import 'package:easycut/view/screen/auth/success.dart';
 import 'package:easycut/view/screen/home.dart';
+import 'package:easycut/view/screen/home/profile_edit.dart';
 import 'package:easycut/view/screen/home/search_salon.dart';
 import 'package:easycut/view/screen/language.dart';
 import 'package:easycut/view/screen/main/book_salon_view.dart';
@@ -84,7 +85,6 @@ List<GetPage<dynamic>>? routes = [
     name: AppRoute.salonDetails,
     page: () => const SalonDetails(),
   ),
-
   GetPage(
     name: AppRoute.bookSalonView,
     page: () => const BookSalonView(),
@@ -92,5 +92,9 @@ List<GetPage<dynamic>>? routes = [
   GetPage(
     name: AppRoute.successBooking,
     page: () => const SuccessBokking(),
+  ),
+  GetPage(
+    name: AppRoute.profileEdit,
+    page: () => const ProfileEditScreen(),
   ),
 ];

@@ -18,4 +18,8 @@ class AppRoute {
   static const String salonBookingDetails = "/salonbookingdetails";
   static const String bookSalonView = "/booksalonview";
   static const String successBooking = "/success-booking";
+
+
+
+  static const String profileEdit = "/profile-edit";
 }
