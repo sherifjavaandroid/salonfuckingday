@@ -66,7 +66,9 @@ class ProfileEditController extends GetxController {
     confirmPasswordController = TextEditingController();
 
     // Get current user data
-    getData();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      getData();
+    });
   }
 
   @override
@@ -98,7 +100,7 @@ class ProfileEditController extends GetxController {
         var data = response['profile'] as Map<String, dynamic>;
         currentProfile = ProfileModel.fromJson(data);
 
-        // Fill controllers with current data
+        // Fill controllers with current  data
         nameController.text = currentProfile.name ?? "";
         emailController.text = currentProfile.email ?? "";
         phoneController.text = currentProfile.phone ?? "";

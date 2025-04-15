@@ -6,6 +6,8 @@ import 'package:easycut/data/data_source/remote/auth/login.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../view/screen/auth/signup.dart';
+
 abstract class LoginController extends GetxController {
   login();
   goToForgetPassword();
@@ -30,20 +32,19 @@ class LoginControllerImp extends LoginController {
   goToForgetPassword() {
     Get.toNamed(AppRoute.forgetPassword);
   }
-
   @override
   goToSignUp() {
-    if (_isNavigating) return; // ignore if a navigation is already in progress
-    _isNavigating = true;
-    WidgetsBinding.instance.addPostFrameCallback((_) {
-      Get.offNamed(AppRoute.signUp);
-      // Optionally reset _isNavigating after a delay if necessary
-      Future.delayed(const Duration(milliseconds: 300), () {
-        _isNavigating = false;
-      });
-    });
+    // Simple straightforward approach
+    try {
+      // Use a synchronous method to avoid conflicts
+      Get.to(() => const SignUp(),
+          transition: Transition.rightToLeft,
+          duration: Duration(milliseconds: 500),
+          preventDuplicates: true);
+    } catch (e) {
+      print("Navigation error: $e");
+    }
   }
-
 
   @override
   login() async {
