@@ -1,0 +1,46 @@
+[
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-xxxhdpi_ic_launcher5.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-xxxhdpi/ic_launcher5.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-hdpi_ic_launcher1.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-hdpi/ic_launcher1.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/drawable-v21_launch_background.xml.flat",
+        "source": "com.easycut.ease.app-main-35:/drawable-v21/launch_background.xml"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-hdpi_ic_launcher.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-hdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-xxhdpi_ic_launcher4.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-xxhdpi/ic_launcher4.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-xxxhdpi_ic_launcher.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-xxxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-xhdpi_ic_launcher3.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-xhdpi/ic_launcher3.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-xxhdpi_ic_launcher.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-xxhdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-mdpi_ic_launcher2.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-mdpi/ic_launcher2.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-mdpi_ic_launcher.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-mdpi/ic_launcher.png"
+    },
+    {
+        "merged": "com.easycut.ease.app-merged_res-41:/mipmap-xhdpi_ic_launcher.png.flat",
+        "source": "com.easycut.ease.app-main-35:/mipmap-xhdpi/ic_launcher.png"
+    }
+]

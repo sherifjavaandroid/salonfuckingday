@@ -1,0 +1,19 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.easycut.ease.app-mergeDebugResources-39:/values-port/values-port.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\Administrator\\.gradle\\caches\\transforms-3\\acb76a1fc2494813398b7555ee283358\\transformed\\appcompat-1.1.0-alpha01\\res\\values-port\\values-port.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    }
+                }
+            ]
+        }
+    ]
+}
