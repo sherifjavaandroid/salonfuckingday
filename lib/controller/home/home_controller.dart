@@ -9,11 +9,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import '../../core/location_services.dart';
+
 abstract class HomeController extends GetxController {
   void initialData();
   Future<void> getData();
   bool get isLoggedIn;
   void filterByClassification(String classification);
+  Future<void> refreshSalonsWithLocation();
 }
 
 class HomeControllerImp extends HomeController {
@@ -30,10 +33,17 @@ class HomeControllerImp extends HomeController {
   List<SalonModel> _allNearSalons = [];
   List<SalonModel> _allNewSalons = [];
 
+  // Location services
+  late LocationServices locationServices;
+  var isLocationEnabled = false.obs;
+  var userLatitude = 0.0.obs;
+  var userLongitude = 0.0.obs;
+
   String? name;
   String? gender;
   String? country;
   String? city;
+  String? address;
   String? image;
 
   final HomeData homeData = HomeData(Get.find());
@@ -45,12 +55,20 @@ class HomeControllerImp extends HomeController {
   @override
   void initialData() {
     id = myServices.sharedPreferences.getInt('id');
-
     name = myServices.sharedPreferences.getString('name');
     gender = myServices.sharedPreferences.getString('gender');
     country = myServices.sharedPreferences.getString('country');
     city = myServices.sharedPreferences.getString('city');
     image = myServices.sharedPreferences.getString('image');
+    address = myServices.sharedPreferences.getString('address');
+
+    // Get location data from shared preferences if available
+    userLatitude.value = myServices.sharedPreferences.getDouble('user_latitude') ?? 0.0;
+    userLongitude.value = myServices.sharedPreferences.getDouble('user_longitude') ?? 0.0;
+
+    if (userLatitude.value != 0.0 && userLongitude.value != 0.0) {
+      isLocationEnabled.value = true;
+    }
   }
 
   @override
@@ -59,7 +77,12 @@ class HomeControllerImp extends HomeController {
     update();
 
     try {
-      var response = await homeData.viewSalons();
+      var response = await homeData.viewSalons(
+          latitude: userLatitude.value,
+          longitude: userLongitude.value,
+          useLocation: isLocationEnabled.value
+      );
+
       if (kDebugMode) {
         print('Response: $response');
       }
@@ -89,7 +112,7 @@ class HomeControllerImp extends HomeController {
         } else {
           Get.snackbar(
             'Warning'.tr,
-            'There is no data for your country'.tr,
+            'There is no data for your location'.tr,
             snackPosition: SnackPosition.TOP,
             colorText: Colors.red,
           );
@@ -109,6 +132,24 @@ class HomeControllerImp extends HomeController {
       }
     } finally {
       update();
+    }
+  }
+
+  @override
+  Future<void> refreshSalonsWithLocation() async {
+    // Update location data
+    if (locationServices.currentPosition.value != null) {
+      userLatitude.value = locationServices.currentPosition.value!.latitude;
+      userLongitude.value = locationServices.currentPosition.value!.longitude;
+
+      country = locationServices.country.value;
+      city = locationServices.city.value;
+      address = locationServices.address.value;
+
+      isLocationEnabled.value = true;
+
+      // Reload data with new location
+      await getData();
     }
   }
 
@@ -158,7 +199,13 @@ class HomeControllerImp extends HomeController {
     update();
 
     try {
-      var response = await homeData.searchSalon(search, id!);
+      var response = await homeData.searchSalon(
+          search,
+          id ?? 0,
+          latitude: userLatitude.value,
+          longitude: userLongitude.value,
+          useLocation: isLocationEnabled.value
+      );
 
       if (kDebugMode) {
         print('Response: $response');
@@ -210,6 +257,7 @@ class HomeControllerImp extends HomeController {
 
   @override
   void onInit() {
+    locationServices = Get.put(LocationServices());
     initialData();
     getData();
     super.onInit();

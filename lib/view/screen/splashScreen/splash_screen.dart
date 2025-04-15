@@ -12,12 +12,14 @@ class SplashScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final SplashController controller = Get.put(SplashController());
+    // Pass context to controller
+    controller.setContext(context);
 
     return Scaffold(
       backgroundColor: AppColor.selectedColor,
       body: Center(
         child: Obx(
-          () => AnimatedOpacity(
+              () => AnimatedOpacity(
             duration: const Duration(seconds: 5),
             opacity: controller.opacity.value,
             child: Column(

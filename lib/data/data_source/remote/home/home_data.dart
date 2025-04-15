@@ -6,10 +6,19 @@ class HomeData {
 
   HomeData(this.crud);
 
-  Future<dynamic> viewSalons() async {
-    var response = await crud.getData(
-      AppLink.home,
-    );
+  Future<dynamic> viewSalons({
+    double latitude = 0.0,
+    double longitude = 0.0,
+    bool useLocation = false
+  }) async {
+    String url = AppLink.home;
+
+    // If location is enabled, add location parameters
+    if (useLocation && latitude != 0.0 && longitude != 0.0) {
+      url = "${AppLink.home}?lat=$latitude&lng=$longitude";
+    }
+
+    var response = await crud.getData(url);
     return response.fold((l) => l, (r) => r);
   }
 
@@ -36,9 +45,21 @@ class HomeData {
     return response.fold((l) => l, (r) => r);
   }
 
-  Future<dynamic> searchSalon(String search, int userid) async {
-    var response = await crud
-        .getData("${AppLink.searchSalon}?user_id=$userid&query=$search");
+  Future<dynamic> searchSalon(
+      String search,
+      int userid, {
+        double latitude = 0.0,
+        double longitude = 0.0,
+        bool useLocation = false
+      }) async {
+    String url = "${AppLink.searchSalon}?user_id=$userid&query=$search";
+
+    // If location is enabled, add location parameters
+    if (useLocation && latitude != 0.0 && longitude != 0.0) {
+      url = "$url&lat=$latitude&lng=$longitude";
+    }
+
+    var response = await crud.getData(url);
     return response.fold((l) => l, (r) => r);
   }
 }

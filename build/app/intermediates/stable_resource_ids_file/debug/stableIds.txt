@@ -1982,6 +1982,7 @@ com.easycut.ease:id/action_bar = 0x7f080028
 com.easycut.ease:style/Base.TextAppearance.AppCompat.Medium.Inverse = 0x7f0f0022
 com.easycut.ease:attr/chipStandaloneStyle = 0x7f030086
 com.easycut.ease:color/cardview_shadow_start_color = 0x7f05002d
+com.easycut.ease:xml/flutter_share_file_paths = 0x7f110001
 com.easycut.ease:attr/fabAnimationMode = 0x7f030107
 com.easycut.ease:attr/listDividerAlertDialog = 0x7f03016b
 com.easycut.ease:attr/chipGroupStyle = 0x7f03007b
