@@ -19,22 +19,20 @@ import 'package:get/get.dart';
 
 import '../../../core/constant/color.dart';
 import '../../../features/search/controller/carousel_controller_x.dart';
+import '../../widget/home/salon_classification_filter_widget.dart';
 
 class MainView extends StatelessWidget {
   const MainView({super.key});
   @override
   Widget build(BuildContext context) {
-    final CarouselControllerX controllerX =
-        Get.put(CarouselControllerX()); // Inject controller
+    final CarouselControllerX controllerX = Get.put(CarouselControllerX());
 
     final List<String> imageList = [
       'assets/images/salonbk/salon1.jpg',
       'assets/images/salonbk/salon2.jpg',
       'assets/images/salonbk/salon4.jpg',
     ];
-    int _currentIndex = 0;
 
-    // ignore: deprecated_member_use
     return WillPopScope(
       onWillPop: () async {
         final shouldPop = await showExitConfirmationDialog(context);
@@ -59,13 +57,15 @@ class MainView extends StatelessWidget {
                   SizedBox(height: Dimensions.height10),
                   CustomButtonSearch(
                     onPressed: () {
-                      // showSearch(
-                      //     context: context, delegate: SalonSearchDelegate());
                       Get.offNamed(AppRoute.searchSalon);
                     },
                     prefixIcon: AppImageAsset.search,
                     hintText: "Search".tr,
                   ),
+
+                  // Add the salon classification filter widget
+                  const SalonClassificationFilter(),
+
                   SizedBox(height: Dimensions.height10.h),
                   HandlingDataView(
                     statusRequest: controller.statusRequest,
@@ -74,88 +74,82 @@ class MainView extends StatelessWidget {
                       children: [
                         controller.popSalons.isEmpty
                             ? Column(
-                                children: [
-                                  SizedBox(
-                                    width: 364.w,
-                                    height: 225.h,
-                                    child: CarouselSlider(
-                                      options: CarouselOptions(
-                                        aspectRatio: 3.5,
-                                        enlargeCenterPage: false,
-                                        height: 225.h,
-                                        autoPlay: true,
-                                        autoPlayAnimationDuration:
-                                            Durations.long1,
-                                        onPageChanged: (index, reason) {
-                                          controllerX.updateIndex(index);
-                                        },
-                                      ),
-                                      items: imageList.map((imagePath) {
-                                        return Builder(
-                                          builder: (BuildContext context) {
-                                            return Container(
-                                              margin: EdgeInsetsDirectional
-                                                  .symmetric(horizontal: 5.w),
-                                              width: 364.w,
-                                              height: 100.h,
-                                              decoration: BoxDecoration(
-                                                border: Border.all(
-                                                    color: Colors.black,
-                                                    width: 1.w),
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                              ),
-                                              child: ClipRRect(
-                                                borderRadius:
-                                                    BorderRadius.circular(8),
-                                                child: Image.asset(
-                                                  imagePath,
-                                                  fit: BoxFit.fill,
-                                                ),
-                                              ),
-                                            );
-                                          },
-                                        );
-                                      }).toList(),
-                                    ),
-                                  ),
-                                  SizedBox(height: Dimensions.height10.h),
-                                  Obx(
-                                    () => Row(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.center,
-                                      children: List.generate(imageList.length,
-                                          (index) {
-                                        return Container(
-                                          width: 8.w,
-                                          height: 8.h,
-                                          margin: EdgeInsets.symmetric(
-                                              horizontal: 4.w),
-                                          decoration: BoxDecoration(
-                                            color: controllerX
-                                                        .currentIndex.value ==
-                                                    index
-                                                ? AppColor.iconColor1
-                                                : AppColor.backgroundicons2,
-                                            shape: BoxShape.circle,
+                          children: [
+                            SizedBox(
+                              width: 364.w,
+                              height: 225.h,
+                              child: CarouselSlider(
+                                options: CarouselOptions(
+                                  aspectRatio: 3.5,
+                                  enlargeCenterPage: false,
+                                  height: 225.h,
+                                  autoPlay: true,
+                                  autoPlayAnimationDuration:
+                                  Durations.long1,
+                                  onPageChanged: (index, reason) {
+                                    controllerX.updateIndex(index);
+                                  },
+                                ),
+                                items: imageList.map((imagePath) {
+                                  return Builder(
+                                    builder: (BuildContext context) {
+                                      return Container(
+                                        margin: EdgeInsetsDirectional
+                                            .symmetric(horizontal: 5.w),
+                                        width: 364.w,
+                                        height: 100.h,
+                                        decoration: BoxDecoration(
+                                          border: Border.all(
+                                              color: Colors.black,
+                                              width: 1.w),
+                                          borderRadius:
+                                          BorderRadius.circular(8),
+                                        ),
+                                        child: ClipRRect(
+                                          borderRadius:
+                                          BorderRadius.circular(8),
+                                          child: Image.asset(
+                                            imagePath,
+                                            fit: BoxFit.fill,
                                           ),
-                                        );
-                                      }),
-                                    ),
-                                  ),
-                                ],
-                              )
+                                        ),
+                                      );
+                                    },
+                                  );
+                                }).toList(),
+                              ),
+                            ),
+                            SizedBox(height: Dimensions.height10.h),
+                            Obx(
+                                  () => Row(
+                                mainAxisAlignment:
+                                MainAxisAlignment.center,
+                                children: List.generate(imageList.length,
+                                        (index) {
+                                      return Container(
+                                        width: 8.w,
+                                        height: 8.h,
+                                        margin: EdgeInsets.symmetric(
+                                            horizontal: 4.w),
+                                        decoration: BoxDecoration(
+                                          color: controllerX
+                                              .currentIndex.value ==
+                                              index
+                                              ? AppColor.iconColor1
+                                              : AppColor.backgroundicons2,
+                                          shape: BoxShape.circle,
+                                        ),
+                                      );
+                                    }),
+                              ),
+                            ),
+                          ],
+                        )
                             : SlidingPopularSalons(
-                                popularSalon: controller.popSalons),
-                        // Divider(
-                        //   color: Colors.grey[300],
-                        //   thickness: 1,
-                        //   indent: Dimensions.width30,
-                        //   endIndent: Dimensions.width30,
-                        // ),
-                        SizedBox(
-                          height: 10.h,
-                        ),
+                            popularSalon: controller.popSalons),
+
+                        SizedBox(height: 10.h),
+
                         NewestText(
                           title: 'Near for you'.tr,
                         ),
@@ -167,8 +161,8 @@ class MainView extends StatelessWidget {
                           child: SmallText(
                             maxline: 1,
                             text:
-                                "Don’t waste your time and book at your preference"
-                                    .tr,
+                            "Don't waste your time and book at your preference"
+                                .tr,
                             color: AppColor.titleColor,
                             size: 12.5.sp,
                           ),
@@ -176,43 +170,24 @@ class MainView extends StatelessWidget {
 
                         controller.isLoggedIn
                             ? ListView.builder(
-                                shrinkWrap:
-                                    true, // Allows the list to take the required height
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: controller.newSalons.length,
-                                itemBuilder: (context, index) {
-                                  return GuestNewestsalonitem(
-                                    salon: controller.newSalons[index],
-                                  );
-                                })
-
-                            // SizedBox(
-                            //     height: Dimensions.height100,
-                            //     child: Center(
-                            //       child: TextButton.icon(
-                            //           onPressed: () {
-                            //             Get.offAllNamed(AppRoute.login);
-                            //           },
-                            //           icon: const Icon(Icons.login),
-                            //           label: SmallText(
-                            //             text:
-                            //                 'Please login first to choose among various barbers in your location'
-                            //                     .tr,
-                            //             size: Dimensions.font16,
-                            //           )),
-                            //     ),
-                            //   )
+                            shrinkWrap: true,
+                            physics: const NeverScrollableScrollPhysics(),
+                            itemCount: controller.newSalons.length,
+                            itemBuilder: (context, index) {
+                              return GuestNewestsalonitem(
+                                salon: controller.newSalons[index],
+                              );
+                            })
                             : ListView.builder(
-                                shrinkWrap:
-                                    true, // Allows the list to take the required height
-                                physics: const NeverScrollableScrollPhysics(),
-                                itemCount: controller.newSalons.length,
-                                itemBuilder: (context, index) {
-                                  return NewestSalonItem(
-                                    salon: controller.newSalons[index],
-                                  );
-                                },
-                              ),
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          itemCount: controller.newSalons.length,
+                          itemBuilder: (context, index) {
+                            return NewestSalonItem(
+                              salon: controller.newSalons[index],
+                            );
+                          },
+                        ),
                       ],
                     ),
                   ),

@@ -13,6 +13,7 @@ abstract class HomeController extends GetxController {
   void initialData();
   Future<void> getData();
   bool get isLoggedIn;
+  void filterByClassification(String classification);
 }
 
 class HomeControllerImp extends HomeController {
@@ -22,6 +23,12 @@ class HomeControllerImp extends HomeController {
   var isLoading = true.obs;
   int? id;
   List<SearchsalonModel> searchResults = [];
+
+  // Classification filter
+  RxString currentClassification = "all".obs;
+  List<SalonModel> _allPopSalons = [];
+  List<SalonModel> _allNearSalons = [];
+  List<SalonModel> _allNewSalons = [];
 
   String? name;
   String? gender;
@@ -48,10 +55,6 @@ class HomeControllerImp extends HomeController {
 
   @override
   Future<void> getData() async {
-    // if (gender == null || country == null || city == null) {
-    //   return;
-    // }
-
     statusRequest = StatusRequest.loading;
     update();
 
@@ -67,16 +70,22 @@ class HomeControllerImp extends HomeController {
 
       if (statusRequest == StatusRequest.success) {
         if (response['status'] == 'success') {
-          nearSalons =
-              (response['nearsalons'] ?? []).map<SalonModel>((element) {
+          _allNearSalons = (response['nearsalons'] ?? []).map<SalonModel>((element) {
             return SalonModel.fromJson(element as Map<String, dynamic>);
           }).toList();
-          popSalons = (response['popsalons'] ?? []).map<SalonModel>((element) {
+
+          _allPopSalons = (response['popsalons'] ?? []).map<SalonModel>((element) {
             return SalonModel.fromJson(element as Map<String, dynamic>);
           }).toList();
-          newSalons = (response['newsalons'] ?? []).map<SalonModel>((element) {
+
+          _allNewSalons = (response['newsalons'] ?? []).map<SalonModel>((element) {
             return SalonModel.fromJson(element as Map<String, dynamic>);
           }).toList();
+
+          // Initialize displayed lists with all salons
+          nearSalons = List.from(_allNearSalons);
+          popSalons = List.from(_allPopSalons);
+          newSalons = List.from(_allNewSalons);
         } else {
           Get.snackbar(
             'Warning'.tr,
@@ -101,6 +110,24 @@ class HomeControllerImp extends HomeController {
     } finally {
       update();
     }
+  }
+
+  @override
+  void filterByClassification(String classification) {
+    currentClassification.value = classification;
+
+    if (classification == "all") {
+      // Reset to show all salons
+      nearSalons = List.from(_allNearSalons);
+      popSalons = List.from(_allPopSalons);
+      newSalons = List.from(_allNewSalons);
+    } else {
+      // Filter salons by classification
+      nearSalons = _allNearSalons.where((salon) => salon.classification == classification).toList();
+      popSalons = _allPopSalons.where((salon) => salon.classification == classification).toList();
+      newSalons = _allNewSalons.where((salon) => salon.classification == classification).toList();
+    }
+    update();
   }
 
   Future<void> fetchRating(int salonId) async {
@@ -143,6 +170,13 @@ class HomeControllerImp extends HomeController {
         searchResults = response
             .map((e) => SearchsalonModel.fromJson(e as Map<String, dynamic>))
             .toList();
+
+        // Filter search results if a classification is selected
+        if (currentClassification.value != "all") {
+          searchResults = searchResults.where((salon) =>
+          salon.classification == currentClassification.value).toList();
+        }
+
         statusRequest = searchResults.isNotEmpty
             ? StatusRequest.success
             : StatusRequest.failure;

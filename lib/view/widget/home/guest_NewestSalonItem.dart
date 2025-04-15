@@ -56,6 +56,31 @@ class GuestNewestsalonitem extends StatelessWidget {
                       ),
                     ),
                   ),
+
+                  // Classification badge
+                  if (salon.classification != null)
+                    Positioned(
+                      top: 8,
+                      left: 8,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 4.h),
+                        decoration: BoxDecoration(
+                          color: salon.classification == 'luxury'
+                              ? const Color(0xFFD4AF37).withOpacity(0.8) // Gold for luxury
+                              : const Color(0xFF4CAF50).withOpacity(0.8), // Green for economic
+                          borderRadius: BorderRadius.circular(4.r),
+                        ),
+                        child: Text(
+                          salon.classification == 'luxury' ? 'Luxury'.tr : 'Economic'.tr,
+                          style: TextStyle(
+                            color: Colors.white,
+                            fontWeight: FontWeight.bold,
+                            fontSize: 12.sp,
+                          ),
+                        ),
+                      ),
+                    ),
+
                   Padding(
                     padding: const EdgeInsets.all(8.0),
                     child: Align(

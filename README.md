@@ -17,5 +17,13 @@ res
 }
 
 -------------------------------------------------------
+تقسيمه الكاتيجوري
+
+GET /api/salons?classification=luxury
+
+Headers:
+Authorization: Bearer {token}
 
 
+
+------------------------------

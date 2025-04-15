@@ -16,25 +16,27 @@ class SearchsalonModel {
   String? address;
   String? createdAt;
   String? updatedAt;
+  String? classification; // New field for Luxury/Economic classification
 
   SearchsalonModel(
       {this.id,
-      this.name,
-      this.email,
-      this.password,
-      this.gender,
-      this.phone,
-      this.rate,
-      this.chairs,
-      this.categoryId,
-      this.subscription,
-      this.image,
-      this.approve,
-      this.country,
-      this.city,
-      this.address,
-      this.createdAt,
-      this.updatedAt});
+        this.name,
+        this.email,
+        this.password,
+        this.gender,
+        this.phone,
+        this.rate,
+        this.chairs,
+        this.categoryId,
+        this.subscription,
+        this.image,
+        this.approve,
+        this.country,
+        this.city,
+        this.address,
+        this.createdAt,
+        this.updatedAt,
+        this.classification}); // Added classification parameter
 
   SearchsalonModel.fromJson(Map<String, dynamic> json) {
     id = json["id"];
@@ -54,6 +56,7 @@ class SearchsalonModel {
     address = json["address"];
     createdAt = json["created_at"];
     updatedAt = json["updated_at"];
+    classification = json["classification"]; // Parse classification from JSON
   }
 
   static List<SearchsalonModel> fromList(List<Map<String, dynamic>> list) {
@@ -79,6 +82,7 @@ class SearchsalonModel {
     _data["address"] = address;
     _data["created_at"] = createdAt;
     _data["updated_at"] = updatedAt;
+    _data["classification"] = classification;
     return _data;
   }
 }

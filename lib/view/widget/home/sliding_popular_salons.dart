@@ -2,10 +2,10 @@ import 'package:dots_indicator/dots_indicator.dart';
 import 'package:easycut/core/constant/color.dart';
 import 'package:easycut/core/constant/dimensions.dart';
 import 'package:easycut/core/constant/routes.dart';
-import 'package:easycut/data/model/home_model.dart';
 import 'package:easycut/data/model/salon_model.dart';
 import 'package:easycut/linkapi.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 import 'show_salon_card.dart';
@@ -64,7 +64,7 @@ class _SlidingPopularSalonsState extends State<SlidingPopularSalons> {
         SizedBox(
           height: Dimensions.height20,
           child: DotsIndicator(
-            dotsCount: widget.popularSalon.length,
+            dotsCount: widget.popularSalon.isEmpty ? 1 : widget.popularSalon.length,
             position: _currentPageValue.floor(),
             decorator: DotsDecorator(
               activeColor: AppColor.primaryColor,
@@ -81,9 +81,9 @@ class _SlidingPopularSalonsState extends State<SlidingPopularSalons> {
   }
 
   Widget _buildPageItem(
-    int index,
-    SalonModel salon,
-  ) {
+      int index,
+      SalonModel salon,
+      ) {
     Matrix4 matrix = Matrix4.identity();
     if (index == _currentPageValue.floor()) {
       var currScale = 1 - (_currentPageValue - index) * (1 - _scaleFactor);
@@ -136,6 +136,38 @@ class _SlidingPopularSalonsState extends State<SlidingPopularSalons> {
                 ),
               ),
             ),
+
+            // Classification badge
+            if (salon.classification != null)
+              Positioned(
+                top: 20,
+                left: 20,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 6.h),
+                  decoration: BoxDecoration(
+                    color: salon.classification == 'luxury'
+                        ? const Color(0xFFD4AF37).withOpacity(0.9) // Gold for luxury
+                        : const Color(0xFF4CAF50).withOpacity(0.9), // Green for economic
+                    borderRadius: BorderRadius.circular(8.r),
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black26,
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Text(
+                    salon.classification == 'luxury' ? 'Luxury'.tr : 'Economic'.tr,
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 14.sp,
+                    ),
+                  ),
+                ),
+              ),
+
             Align(
               alignment: Alignment.bottomCenter,
               child: Container(
