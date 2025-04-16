@@ -38,14 +38,25 @@ class AppLink {
 
 
 
+// ================================= Booking Management ====================
+  // New endpoints for booking management
+  static const String viewBookingDetails = "$server/booking/details.php";
+  static const String viewBookingServices = "$server/booking/services.php";
+  static const String cancelBooking = "$server/booking/cancel.php";
+  static const String rescheduleBooking = "$server/booking/reschedule.php";
 
+// ================================= Rating System ====================
+  static const String rateBooking = "$server/booking/rate.php";
+  static const String checkBookingRated = "$server/booking/check_rated.php";
+  static const String viewUnratedBookings = "$server/booking/unrated.php";
 
-
-
-
-  // Profile update endpoints
+// ================================= Profile Management ====================
   static const String updateProfile = "$server/users/profile/update.php";
   static const String updateProfileWithImage = "$server/users/profile/update_with_image.php";
+
+
+
+
 
 
 

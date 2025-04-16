@@ -6,6 +6,7 @@ import 'package:easycut/core/constant/routes.dart';
 import 'package:easycut/view/widget/home/cart_profile.dart';
 import 'package:easycut/view/widget/profile/about_profile.dart';
 import 'package:easycut/view/widget/profile/edit_profile_button.dart';
+import 'package:easycut/view/widget/profile/location_settings.dart';
 import 'package:easycut/view/widget/profile/profile_favorite_salons.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -97,7 +98,7 @@ class ProfileView extends StatelessWidget {
                   Container(
                     width: double.infinity,
                     height: 41,
-                    decoration: const BoxDecoration(
+                    decoration: BoxDecoration(
                       border: Border.symmetric(
                         horizontal: BorderSide(
                           color: AppColor.backgroundicons2,
@@ -162,13 +163,23 @@ class ProfileView extends StatelessWidget {
                         : TabBarView(
                       controller: controller.tabController,
                       children: [
-                        AboutProfile(
-                          email: controller.profile.email ?? "",
-                          country: controller.profile.country ?? "",
-                          gender: controller.profile.gender,
-                          city: controller.profile.city,
-                          address: controller.profile.address,
-                          phone: controller.profile.phone,
+                        SingleChildScrollView(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              AboutProfile(
+                                email: controller.profile.email ?? "",
+                                country: controller.profile.country ?? "",
+                                gender: controller.profile.gender,
+                                city: controller.profile.city,
+                                address: controller.profile.address,
+                                phone: controller.profile.phone,
+                              ),
+                              SizedBox(height: 20.h),
+                              // Location Settings
+                              const LocationSettings(),
+                            ],
+                          ),
                         ),
                         controller.favorites.isEmpty
                             ? Center(

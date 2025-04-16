@@ -43,7 +43,6 @@ res
 "id": 1,
 "name": "Luxury Salon & Spa",
 "email": "info@luxurysalon.com",
-"password": "********", // This should be removed from API responses
 "gender": "male",
 "phone": "+20123456789",
 "rate": 4.8,
@@ -63,7 +62,6 @@ res
 "id": 2,
 "name": "Economic Cuts",
 "email": "info@economiccuts.com",
-"password": "********", // This should be removed from API responses
 "gender": "female",
 "phone": "+20123456780",
 "rate": 4.5,
