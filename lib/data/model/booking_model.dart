@@ -11,6 +11,7 @@ class BookingModel {
   String? salonname;
   String? username;
   String? status; // Add status property
+  String? salonid; // Add salon ID for rescheduling
 
   BookingModel({
     this.id,
@@ -25,8 +26,7 @@ class BookingModel {
     this.salonname,
     this.username,
     this.status,
-
-    // Include it in the constructor
+    this.salonid,
   });
 
   BookingModel.fromJson(Map<String, dynamic> json) {
@@ -42,6 +42,7 @@ class BookingModel {
     salonname = json['name']?.toString();
     username = json['username']?.toString();
     status = json['status']?.toString();
+    salonid = json['salonid']?.toString();
   }
 
   Map<String, dynamic> toJson() {
@@ -58,8 +59,7 @@ class BookingModel {
     data['name'] = this.salonname;
     data['username'] = this.username;
     data['status'] = this.status;
-
-    // Include it in the JSON map
+    data['salonid'] = this.salonid;
     return data;
   }
 }

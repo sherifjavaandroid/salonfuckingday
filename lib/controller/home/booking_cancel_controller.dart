@@ -32,12 +32,12 @@ class BookingCancellationController extends GetxController {
     required this.bookingTime,
   }) {
     bookingOperations = BookingOperationsData(Get.find());
-    _initializeController();
   }
 
   @override
   void onInit() {
     super.onInit();
+    _initializeController();
     // Start timer to update remaining time
     _startRemainingTimeTimer();
   }
@@ -50,12 +50,19 @@ class BookingCancellationController extends GetxController {
   void _fetchBookingDetails() async {
     try {
       final response = await bookingOperations.getBookingDetails(bookingId);
+      if (kDebugMode) {
+        print("Booking details response: $response");
+      }
 
       if (response != null && response['status'] == 'success') {
         // Parse response data
         if (response['data'] != null) {
           final bookingData = response['data'];
           salonId = bookingData['salon_id'];
+
+          if (kDebugMode) {
+            print("Salon ID: $salonId");
+          }
         }
       } else {
         Get.snackbar(
@@ -78,21 +85,58 @@ class BookingCancellationController extends GetxController {
       final dateFormat = DateFormat('yyyy-MM-dd');
       final timeFormat = DateFormat('HH:mm');
 
-      final bookingDate = dateFormat.parse(bookingDay);
-      final timeParts = bookingTime.split(':');
-      final bookingTimeObj = TimeOfDay(
-        hour: int.parse(timeParts[0]),
-        minute: int.parse(timeParts[1]),
-      );
+      if (kDebugMode) {
+        print("Checking eligibility for day: $bookingDay, time: $bookingTime");
+      }
 
-      // Create booking datetime
-      final bookingDateTime = DateTime(
-        bookingDate.year,
-        bookingDate.month,
-        bookingDate.day,
-        bookingTimeObj.hour,
-        bookingTimeObj.minute,
-      );
+      final bookingDate = dateFormat.parse(bookingDay);
+
+      // Handle different time formats
+      DateTime bookingDateTime;
+      try {
+        final timeParts = bookingTime.split(':');
+        final bookingTimeObj = TimeOfDay(
+          hour: int.parse(timeParts[0]),
+          minute: int.parse(timeParts[1].split(' ').first),
+        );
+
+        // Create booking datetime
+        bookingDateTime = DateTime(
+          bookingDate.year,
+          bookingDate.month,
+          bookingDate.day,
+          bookingTimeObj.hour,
+          bookingTimeObj.minute,
+        );
+      } catch (e) {
+        // Alternative parsing if the first method fails
+        try {
+          final timeObj = timeFormat.parse(bookingTime);
+          bookingDateTime = DateTime(
+            bookingDate.year,
+            bookingDate.month,
+            bookingDate.day,
+            timeObj.hour,
+            timeObj.minute,
+          );
+        } catch (e2) {
+          // Fallback to a default time if all parsing fails
+          bookingDateTime = DateTime(
+            bookingDate.year,
+            bookingDate.month,
+            bookingDate.day,
+            12, 0, // Default to noon
+          );
+
+          if (kDebugMode) {
+            print("Error parsing time, using default: $e2");
+          }
+        }
+      }
+
+      if (kDebugMode) {
+        print("Booking date time: $bookingDateTime");
+      }
 
       // Calculate cancellation deadline (6 hours before appointment)
       final cancellationDeadlineTime = bookingDateTime.subtract(const Duration(hours: 6));
@@ -110,6 +154,12 @@ class BookingCancellationController extends GetxController {
 
       // Update remaining time text
       _updateRemainingTimeText(cancellationDeadlineTime);
+
+      if (kDebugMode) {
+        print("Can cancel: $canCancel");
+        print("Can reschedule: $canReschedule");
+        print("Cancellation deadline: $cancellationDeadline");
+      }
     } catch (e) {
       if (kDebugMode) {
         print("Error checking cancellation eligibility: $e");
@@ -154,23 +204,48 @@ class BookingCancellationController extends GetxController {
       try {
         // Parse booking date and time
         final dateFormat = DateFormat('yyyy-MM-dd');
-        final timeFormat = DateFormat('HH:mm');
 
         final bookingDate = dateFormat.parse(bookingDay);
-        final timeParts = bookingTime.split(':');
-        final bookingTimeObj = TimeOfDay(
-          hour: int.parse(timeParts[0]),
-          minute: int.parse(timeParts[1]),
-        );
+        DateTime bookingDateTime;
 
-        // Create booking datetime
-        final bookingDateTime = DateTime(
-          bookingDate.year,
-          bookingDate.month,
-          bookingDate.day,
-          bookingTimeObj.hour,
-          bookingTimeObj.minute,
-        );
+        // Try different methods to parse the time
+        try {
+          final timeParts = bookingTime.split(':');
+          final bookingTimeObj = TimeOfDay(
+            hour: int.parse(timeParts[0]),
+            minute: int.parse(timeParts[1].split(' ').first),
+          );
+
+          // Create booking datetime
+          bookingDateTime = DateTime(
+            bookingDate.year,
+            bookingDate.month,
+            bookingDate.day,
+            bookingTimeObj.hour,
+            bookingTimeObj.minute,
+          );
+        } catch (e) {
+          // Fallback parsing
+          final timeFormat = DateFormat('HH:mm');
+          try {
+            final timeObj = timeFormat.parse(bookingTime);
+            bookingDateTime = DateTime(
+              bookingDate.year,
+              bookingDate.month,
+              bookingDate.day,
+              timeObj.hour,
+              timeObj.minute,
+            );
+          } catch (e2) {
+            // Last resort fallback
+            bookingDateTime = DateTime(
+              bookingDate.year,
+              bookingDate.month,
+              bookingDate.day,
+              12, 0, // Default to noon
+            );
+          }
+        }
 
         // Calculate cancellation deadline
         final cancellationDeadlineTime = bookingDateTime.subtract(const Duration(hours: 6));
@@ -202,6 +277,10 @@ class BookingCancellationController extends GetxController {
 
     try {
       final response = await bookingOperations.cancelBooking(bookingId);
+
+      if (kDebugMode) {
+        print("Cancel booking response: $response");
+      }
 
       if (response != null && response['status'] == 'success') {
         Get.snackbar(

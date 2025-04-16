@@ -21,6 +21,7 @@ class RescheduleBookingController extends GetxController {
   String? selectedDate;
   String? selectedTimeSlot;
   List<String> availableTimeSlots = [];
+
   bool get canReschedule => selectedDate != null && selectedTimeSlot != null;
 
   RescheduleBookingController({
@@ -29,6 +30,10 @@ class RescheduleBookingController extends GetxController {
   }) {
     bookingOperations = BookingOperationsData(Get.find());
     bookingData = BookingData(Get.find());
+    if (kDebugMode) {
+      print(
+          "RescheduleBookingController initialized with bookingId: $bookingId, salonId: $salonId");
+    }
   }
 
   void setSelectedDate(DateTime date) {
@@ -62,6 +67,10 @@ class RescheduleBookingController extends GetxController {
       // Fetch services associated with this booking to calculate duration
       final serviceIds = await _getBookingServiceIds();
 
+      if (kDebugMode) {
+        print("Service IDs for booking: $serviceIds");
+      }
+
       if (serviceIds.isEmpty) {
         if (kDebugMode) {
           print("No services found for this booking");
@@ -91,11 +100,8 @@ class RescheduleBookingController extends GetxController {
       availableTimeSlots = [];
 
       // Show error message
-      Get.snackbar(
-          'Error'.tr,
-          'Failed to load available time slots'.tr,
-          snackPosition: SnackPosition.BOTTOM
-      );
+      Get.snackbar('Error'.tr, 'Failed to load available time slots'.tr,
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading = false;
       update();
@@ -105,6 +111,10 @@ class RescheduleBookingController extends GetxController {
   Future<List<String>> _getBookingServiceIds() async {
     try {
       final response = await bookingOperations.getBookingServices(bookingId);
+
+      if (kDebugMode) {
+        print("Booking services response: $response");
+      }
 
       if (response != null && response['status'] == 'success') {
         if (response['services'] != null && response['services'] is List) {
@@ -124,11 +134,8 @@ class RescheduleBookingController extends GetxController {
 
   Future<void> rescheduleBooking() async {
     if (!canReschedule) {
-      Get.snackbar(
-          'Error'.tr,
-          'Please select both date and time'.tr,
-          snackPosition: SnackPosition.BOTTOM
-      );
+      Get.snackbar('Error'.tr, 'Please select both date and time'.tr,
+          snackPosition: SnackPosition.BOTTOM);
       return;
     }
 
@@ -136,37 +143,40 @@ class RescheduleBookingController extends GetxController {
     update();
 
     try {
+      if (kDebugMode) {
+        print(
+            "Rescheduling booking $bookingId to date: $selectedDate, time: $selectedTimeSlot");
+      }
+
       final response = await bookingOperations.rescheduleBooking(
         bookingId: bookingId,
         newDate: selectedDate!,
         newTime: selectedTimeSlot!,
       );
 
+      if (kDebugMode) {
+        print("Reschedule response: $response");
+      }
+
       if (response != null && response['status'] == 'success') {
         Get.snackbar(
-            'Success'.tr,
-            'Your booking has been rescheduled successfully'.tr,
-            snackPosition: SnackPosition.BOTTOM
-        );
+            'Success'.tr, 'Your booking has been rescheduled successfully'.tr,
+            snackPosition: SnackPosition.BOTTOM);
 
         // Navigate back to bookings page
         Get.offAllNamed(AppRoute.home);
       } else {
-        Get.snackbar(
-            'Error'.tr,
+        Get.snackbar('Error'.tr,
             response?['message'] ?? 'Failed to reschedule booking'.tr,
-            snackPosition: SnackPosition.BOTTOM
-        );
+            snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
       if (kDebugMode) {
         print("Error rescheduling booking: $e");
       }
       Get.snackbar(
-          'Error'.tr,
-          'An error occurred while rescheduling your booking'.tr,
-          snackPosition: SnackPosition.BOTTOM
-      );
+          'Error'.tr, 'An error occurred while rescheduling your booking'.tr,
+          snackPosition: SnackPosition.BOTTOM);
     } finally {
       isLoading = false;
       update();

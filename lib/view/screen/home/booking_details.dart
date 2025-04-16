@@ -1,4 +1,3 @@
-
 import 'package:easycut/core/constant/color.dart';
 import 'package:easycut/core/constant/dimensions.dart';
 import 'package:easycut/core/constant/routes.dart';
@@ -257,12 +256,23 @@ class BookingDetailPage extends StatelessWidget {
                   if (controller.canModifyBooking)
                     GestureDetector(
                       onTap: () {
-                        Get.toNamed(AppRoute.bookingCancellation, arguments: {
-                          'bookingId': int.parse(booking.id.toString()),
-                          'day': booking.day,
-                          'time': booking.time,
-                          'salonName': booking.salonname,
-                        });
+                        // Make sure the bookingId is converted to int correctly
+                        int bookingId = int.tryParse(booking.id.toString()) ?? 0;
+
+                        if (bookingId > 0) {
+                          Get.toNamed(AppRoute.bookingCancellation, arguments: {
+                            'bookingId': bookingId,
+                            'day': booking.day ?? '',
+                            'time': booking.time ?? '',
+                            'salonName': booking.salonname ?? '',
+                          });
+                        } else {
+                          Get.snackbar(
+                            'Error'.tr,
+                            'Invalid booking ID'.tr,
+                            snackPosition: SnackPosition.BOTTOM,
+                          );
+                        }
                       },
                       child: Container(
                         width: double.infinity,

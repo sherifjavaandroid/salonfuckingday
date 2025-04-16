@@ -90,7 +90,7 @@ class _BookingViewState extends State<BookingView> with WidgetsBindingObserver {
 
     // Create Android notification details
     const AndroidNotificationDetails androidPlatformChannelSpecifics =
-        AndroidNotificationDetails(
+    AndroidNotificationDetails(
       'booking_channel', // Channel ID
       'Booking Status', // Channel Name
       channelDescription: 'Shows updates for booking status',
@@ -124,7 +124,7 @@ class _BookingViewState extends State<BookingView> with WidgetsBindingObserver {
         // Prevent stack duplication by pushing only one instance of the home screen.
         Navigator.of(context).pushNamedAndRemoveUntil(
           AppRoute.home,
-          (Route<dynamic> route) => false,
+              (Route<dynamic> route) => false,
         );
         return false;
       },
@@ -149,179 +149,246 @@ class _BookingViewState extends State<BookingView> with WidgetsBindingObserver {
                   Expanded(
                     child: controller.bookings.isEmpty
                         ? Center(
-                            child: BigText(
-                              // Check if the user is in guest mode
-                              text: myServices.sharedPreferences.getInt('id') ==
-                                      null
-                                  ? "Please login to make a booking."
-                                      .tr // Guest mode prompt
-                                  : "No bookings available"
-                                      .tr, // Standard message for logged-in users with no bookings
-                              color: AppColor.primaryColor,
-                            ),
-                          )
+                      child: BigText(
+                        // Check if the user is in guest mode
+                        text: myServices.sharedPreferences.getInt('id') ==
+                            null
+                            ? "Please login to make a booking."
+                            .tr // Guest mode prompt
+                            : "No bookings available"
+                            .tr, // Standard message for logged-in users with no bookings
+                        color: AppColor.primaryColor,
+                      ),
+                    )
                         : ListView.separated(
-                            itemBuilder: (context, index) {
-                              final booking = controller.bookings[index];
+                      itemBuilder: (context, index) {
+                        final booking = controller.bookings[index];
 
-                              return SizedBox(
-                                height: 260.h,
-                                width: 294.w,
-                                child: Padding(
-                                  padding: const EdgeInsets.only(
-                                      left: 10, right: 10),
-                                  child: Card(
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(8),
+                        return SizedBox(
+                          height: 325.h, // Increased height to accommodate action buttons
+                          width: 294.w,
+                          child: Padding(
+                            padding: const EdgeInsets.only(
+                                left: 10, right: 10),
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(8),
+                              ),
+                              elevation: 5,
+                              // shadowColor: Colors.grey.withOpacity(0.3),
+                              child: Column(
+                                crossAxisAlignment:
+                                CrossAxisAlignment.start,
+                                children: [
+                                  SizedBox(
+                                    height: 126.h,
+                                    width: 344.w,
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.vertical(
+                                          top: Radius.circular(
+                                              Dimensions.radius5)),
+                                      child: booking.image != null
+                                          ? Image.network(
+                                        "${AppLink.imageSalons}${booking.image}",
+                                        fit: BoxFit.cover,
+                                        loadingBuilder: (context,
+                                            child,
+                                            loadingProgress) {
+                                          if (loadingProgress ==
+                                              null) {
+                                            return child;
+                                          }
+                                          return const Center(
+                                            child:
+                                            CircularProgressIndicator(),
+                                          );
+                                        },
+                                        errorBuilder: (context,
+                                            error, stackTrace) {
+                                          return const Center(
+                                            child: Icon(
+                                              Icons
+                                                  .image_not_supported,
+                                              size: 50,
+                                              color: Colors.grey,
+                                            ),
+                                          );
+                                        },
+                                      )
+                                          : Center(
+                                        child: Image.network(
+                                          'https://th.bing.com/th/id/OIP.U0QLQk1bHABNJk1_J6BCKwAAAA?rs=1&pid=ImgDetMain',
+                                          errorBuilder: (context,
+                                              error, stackTrace) {
+                                            return Text(
+                                              'Please check your internet connection'
+                                                  .tr,
+                                              style: const TextStyle(
+                                                  color: Colors.red,
+                                                  fontSize: 16,
+                                                  fontWeight:
+                                                  FontWeight
+                                                      .bold),
+                                            );
+                                          },
+                                        ),
+                                      ),
                                     ),
-                                    elevation: 5,
-                                    // shadowColor: Colors.grey.withOpacity(0.3),
+                                  ),
+                                  Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: Dimensions.width10.w),
                                     child: Column(
                                       crossAxisAlignment:
-                                          CrossAxisAlignment.start,
+                                      CrossAxisAlignment.start,
                                       children: [
                                         SizedBox(
-                                          height: 126.h,
+                                          height: 34.h,
                                           width: 344.w,
-                                          child: ClipRRect(
-                                            borderRadius: BorderRadius.vertical(
-                                                top: Radius.circular(
-                                                    Dimensions.radius5)),
-                                            child: booking.image != null
-                                                ? Image.network(
-                                                    "${AppLink.imageSalons}${booking.image}",
-                                                    fit: BoxFit.cover,
-                                                    loadingBuilder: (context,
-                                                        child,
-                                                        loadingProgress) {
-                                                      if (loadingProgress ==
-                                                          null) {
-                                                        return child;
-                                                      }
-                                                      return const Center(
-                                                        child:
-                                                            CircularProgressIndicator(),
-                                                      );
-                                                    },
-                                                    errorBuilder: (context,
-                                                        error, stackTrace) {
-                                                      return const Center(
-                                                        child: Icon(
-                                                          Icons
-                                                              .image_not_supported,
-                                                          size: 50,
-                                                          color: Colors.grey,
-                                                        ),
-                                                      );
-                                                    },
-                                                  )
-                                                : Center(
-                                                    child: Image.network(
-                                                      'https://th.bing.com/th/id/OIP.U0QLQk1bHABNJk1_J6BCKwAAAA?rs=1&pid=ImgDetMain',
-                                                      errorBuilder: (context,
-                                                          error, stackTrace) {
-                                                        return Text(
-                                                          'Please check your internet connection'
-                                                              .tr,
-                                                          style: const TextStyle(
-                                                              color: Colors.red,
-                                                              fontSize: 16,
-                                                              fontWeight:
-                                                                  FontWeight
-                                                                      .bold),
-                                                        );
-                                                      },
-                                                    ),
-                                                  ),
-                                          ),
-                                        ),
-                                        Padding(
-                                          padding: EdgeInsets.symmetric(
-                                              horizontal: Dimensions.width10.w),
-                                          child: Column(
-                                            crossAxisAlignment:
-                                                CrossAxisAlignment.start,
+                                          child: Row(
+                                            mainAxisAlignment:
+                                            MainAxisAlignment
+                                                .spaceBetween,
                                             children: [
-                                              SizedBox(
-                                                height: 34.h,
-                                                width: 344.w,
-                                                child: Row(
-                                                  mainAxisAlignment:
-                                                      MainAxisAlignment
-                                                          .spaceBetween,
-                                                  children: [
-                                                    ConstrainedBox(
-                                                      constraints:
-                                                          BoxConstraints(
-                                                              maxWidth: 200.w),
-                                                      child: BigText(
-                                                          text: booking
-                                                              .salonname!),
-                                                    ),
-                                                    _buildStatusIndicator(
-                                                      booking.approve,
-                                                      imagePath:
-                                                          'assets/images/icon/lock.png',
-                                                    ),
-                                                  ],
-                                                ),
+                                              ConstrainedBox(
+                                                constraints:
+                                                BoxConstraints(
+                                                    maxWidth: 200.w),
+                                                child: BigText(
+                                                    text: booking
+                                                        .salonname!),
                                               ),
-                                              SizedBox(
-                                                height: 30.h,
-                                                width: 344.w,
-                                                child: _buildInfoRow(
-                                                  "".tr,
-                                                  booking.phone ?? 'N/A',
-                                                  'assets/images/icon/call-calling.png',
-                                                ),
-                                              ),
-                                              SizedBox(
-                                                height: 30.h,
-                                                width: 344.w,
-                                                child: Row(
-                                                  children: [
-                                                    _buildInfoRow(
-                                                      "".tr,
-                                                      booking.day ?? 'N/A',
-                                                      'assets/images/icon/calendar.png',
-                                                    ),
-                                                    SizedBox(
-                                                        width: Dimensions
-                                                            .width10.w),
-                                                    _buildInfoRow(
-                                                      "".tr,
-                                                      booking.time ?? 'N/A',
-                                                      'assets/images/icon/clock.png',
-                                                    ),
-                                                  ],
-                                                ),
-                                              ),
-                                              Row(
-                                                children: [
-                                                  SizedBox(
-                                                    height: 30.h,
-                                                    child: _buildInfoRow(
-                                                      "".tr,
-                                                      "${booking.total ?? '0'} \$",
-                                                      'assets/images/icon/dollar-square.png',
-                                                    ),
-                                                  ),
-                                                ],
+                                              _buildStatusIndicator(
+                                                booking.approve,
+                                                imagePath:
+                                                'assets/images/icon/lock.png',
                                               ),
                                             ],
                                           ),
                                         ),
+                                        SizedBox(
+                                          height: 30.h,
+                                          width: 344.w,
+                                          child: _buildInfoRow(
+                                            "".tr,
+                                            booking.phone ?? 'N/A',
+                                            'assets/images/icon/call-calling.png',
+                                          ),
+                                        ),
+                                        SizedBox(
+                                          height: 30.h,
+                                          width: 344.w,
+                                          child: Row(
+                                            children: [
+                                              _buildInfoRow(
+                                                "".tr,
+                                                booking.day ?? 'N/A',
+                                                'assets/images/icon/calendar.png',
+                                              ),
+                                              SizedBox(
+                                                  width: Dimensions
+                                                      .width10.w),
+                                              _buildInfoRow(
+                                                "".tr,
+                                                booking.time ?? 'N/A',
+                                                'assets/images/icon/clock.png',
+                                              ),
+                                            ],
+                                          ),
+                                        ),
+                                        Row(
+                                          children: [
+                                            SizedBox(
+                                              height: 30.h,
+                                              child: _buildInfoRow(
+                                                "".tr,
+                                                "${booking.total ?? '0'} \$",
+                                                'assets/images/icon/dollar-square.png',
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+
+                                        // Action Buttons - New addition
+                                        SizedBox(height: 10.h),
+                                        Row(
+                                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                          children: [
+                                            // Cancel Button
+                                            _buildActionButton(
+                                              text: "Cancel".tr,
+                                              icon: Icons.cancel_outlined,
+                                              color: Colors.red,
+                                              onPressed: () {
+                                                // Check if booking is in the waiting or approved state
+                                                if (booking.approve == "0" || booking.approve == "1") {
+                                                  int bookingId = int.tryParse(booking.id.toString()) ?? 0;
+                                                  if (bookingId > 0) {
+                                                    Get.toNamed(AppRoute.bookingCancellation, arguments: {
+                                                      'bookingId': bookingId,
+                                                      'day': booking.day ?? '',
+                                                      'time': booking.time ?? '',
+                                                      'salonName': booking.salonname ?? '',
+                                                    });
+                                                  }
+                                                } else {
+                                                  Get.snackbar(
+                                                      'Cannot Cancel'.tr,
+                                                      'This booking cannot be cancelled'.tr,
+                                                      snackPosition: SnackPosition.BOTTOM
+                                                  );
+                                                }
+                                              },
+                                            ),
+
+                                            // Reschedule Button
+                                            _buildActionButton(
+                                              text: "Reschedule".tr,
+                                              icon: Icons.schedule,
+                                              color: AppColor.primaryColor,
+                                              onPressed: () {
+                                                // Check if booking is in the waiting or approved state
+                                                if (booking.approve == "0" || booking.approve == "1") {
+                                                  int bookingId = int.tryParse(booking.id.toString()) ?? 0;
+                                                  int salonId = int.tryParse(booking.salonid?.toString() ?? "0") ?? 0;
+
+                                                  if (bookingId > 0 && salonId > 0) {
+                                                    Get.toNamed(AppRoute.rescheduleBooking, arguments: {
+                                                      'bookingId': bookingId,
+                                                      'salonId': salonId,
+                                                    });
+                                                  } else {
+                                                    Get.snackbar(
+                                                        'Error'.tr,
+                                                        'Missing required information for rescheduling'.tr,
+                                                        snackPosition: SnackPosition.BOTTOM
+                                                    );
+                                                  }
+                                                } else {
+                                                  Get.snackbar(
+                                                      'Cannot Reschedule'.tr,
+                                                      'This booking cannot be rescheduled'.tr,
+                                                      snackPosition: SnackPosition.BOTTOM
+                                                  );
+                                                }
+                                              },
+                                            ),
+                                          ],
+                                        ),
                                       ],
                                     ),
                                   ),
-                                ),
-                              );
-                            },
-                            separatorBuilder: (context, index) {
-                              return SizedBox(height: 5.h);
-                            },
-                            itemCount: controller.bookings.length,
+                                ],
+                              ),
+                            ),
                           ),
+                        );
+                      },
+                      separatorBuilder: (context, index) {
+                        return SizedBox(height: 5.h);
+                      },
+                      itemCount: controller.bookings.length,
+                    ),
                   ),
                 ],
               ),
@@ -355,8 +422,6 @@ class _BookingViewState extends State<BookingView> with WidgetsBindingObserver {
   }
 
   // Build a status indicator
-  // Modify this part inside your _buildStatusIndicator method:
-  // Modify this part inside your _buildStatusIndicator method:
   Widget _buildStatusIndicator(String? approve, {String? imagePath}) {
     final status = int.tryParse(approve ?? '0') ?? 0; // Default to 0 (Waiting)
 
@@ -418,6 +483,30 @@ class _BookingViewState extends State<BookingView> with WidgetsBindingObserver {
                 color: color, fontWeight: FontWeight.w500, fontSize: 14.sp),
           ),
         ],
+      ),
+    );
+  }
+
+  // New method to build action buttons
+  Widget _buildActionButton({
+    required String text,
+    required IconData icon,
+    required Color color,
+    required VoidCallback onPressed,
+  }) {
+    return ElevatedButton.icon(
+      onPressed: onPressed,
+      icon: Icon(icon, color: Colors.white, size: 18.sp),
+      label: Text(
+        text,
+        style: TextStyle(color: Colors.white, fontSize: 12.sp),
+      ),
+      style: ElevatedButton.styleFrom(
+        backgroundColor: color,
+        padding: EdgeInsets.symmetric(horizontal: 8.w, vertical: 8.h),
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(8.r),
+        ),
       ),
     );
   }

@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SuccessBokking extends StatelessWidget {
   const SuccessBokking({super.key});
-//
+
   @override
   Widget build(BuildContext context) {
     Get.lazyPut(() => SuccessBookingControllerImp());
@@ -63,6 +63,7 @@ class SuccessBokking extends StatelessWidget {
               Container(
                 height: 250.h,
                 width: 262.w,
+                padding: EdgeInsets.all(8.0),
                 decoration: BoxDecoration(
                   color: AppColor.unselectedservies,
                   border: Border.all(
@@ -71,44 +72,34 @@ class SuccessBokking extends StatelessWidget {
                   ),
                   borderRadius: BorderRadius.circular(8.r),
                 ),
-                child: Positioned(
-                  top: 368.h,
-                  left: 37.w,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(children: [
-                      _buildBookingDetailRow(
-                          "Salon Name".tr, controller.salonName!),
-                      SizedBox(height: 5.h),
-                      _buildBookingDetailRow("Chair".tr, controller.chair!),
-                      SizedBox(height: 5.h),
-                      _buildBookingDetailRow("Day".tr, controller.day!),
-                      SizedBox(height: 5.h),
-                      _buildBookingDetailRow("Start Time".tr, controller.time!),
-                      SizedBox(height: 5.h),
-                      _buildBookingDetailRow("Total Time".tr,
-                          "${controller.endTime!} ${'min'.tr}"),
-
-                      SizedBox(height: 5.h),
-                      // _buildBookingDetailRow(
-                      //     "Total Price: ", "${controller.total!} \$"),
-                      Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        children: [
-                          BigText(
-                            color: AppColor.primaryColor,
-                            text: "Total Price".tr,
-                            size: 18.sp,
-                          ),
-                          SmallText(
-                            text: "${controller.total!} \$",
-                            color: AppColor.primaryColor,
-                            size: 16.sp,
-                          ),
-                        ],
-                      ),
-                    ]),
-                  ),
+                child: Column(
+                  children: [
+                    _buildBookingDetailRow("Salon Name".tr, controller.salonName!),
+                    SizedBox(height: 5.h),
+                    _buildBookingDetailRow("Chair".tr, controller.chair!),
+                    SizedBox(height: 5.h),
+                    _buildBookingDetailRow("Day".tr, controller.day!),
+                    SizedBox(height: 5.h),
+                    _buildBookingDetailRow("Start Time".tr, controller.time!),
+                    SizedBox(height: 5.h),
+                    _buildBookingDetailRow("Total Time".tr, "${controller.endTime!} ${'min'.tr}"),
+                    SizedBox(height: 5.h),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        BigText(
+                          color: AppColor.primaryColor,
+                          text: "Total Price".tr,
+                          size: 18.sp,
+                        ),
+                        SmallText(
+                          text: "${controller.total!} \$",
+                          color: AppColor.primaryColor,
+                          size: 16.sp,
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
               Spacer(),
@@ -133,21 +124,23 @@ class SuccessBokking extends StatelessWidget {
     return SizedBox(
       height: 34.h,
       width: 345.w,
-      child: Row(mainAxisAlignment: MainAxisAlignment.spaceBetween, children: [
-        BigText(
-          text: label,
-          size: 18.sp,
-        ),
-        ConstrainedBox(
-          constraints:
-              BoxConstraints(maxWidth: 110.w), // Limit width to 150 pixels((
-          child: SmallText(
-            text: value,
-            color: AppColor.backgroundicons,
-            size: 16.sp,
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        children: [
+          BigText(
+            text: label,
+            size: 18.sp,
           ),
-        ),
-      ]),
+          ConstrainedBox(
+            constraints: BoxConstraints(maxWidth: 110.w),
+            child: SmallText(
+              text: value,
+              color: AppColor.backgroundicons,
+              size: 16.sp,
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
