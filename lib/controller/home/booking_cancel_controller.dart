@@ -5,7 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../data/data_source/remote/home/book_op.dart';
+import '../../api_services.dart';
 
 class BookingCancellationController extends GetxController {
   final int bookingId;
@@ -18,7 +18,7 @@ class BookingCancellationController extends GetxController {
 
   // Services
   final MyServices myServices = Get.find();
-  late BookingOperationsData bookingOperations;
+  late ApiService apiService;
 
   // Properties
   bool canCancel = false;
@@ -31,7 +31,7 @@ class BookingCancellationController extends GetxController {
     required this.bookingDay,
     required this.bookingTime,
   }) {
-    bookingOperations = BookingOperationsData(Get.find());
+    apiService = ApiService();
   }
 
   @override
@@ -49,12 +49,12 @@ class BookingCancellationController extends GetxController {
 
   void _fetchBookingDetails() async {
     try {
-      final response = await bookingOperations.getBookingDetails(bookingId);
+      final response = await apiService.getBookingDetails(bookingId);
       if (kDebugMode) {
         print("Booking details response: $response");
       }
 
-      if (response != null && response['status'] == 'success') {
+      if (response['status'] == 'success') {
         // Parse response data
         if (response['data'] != null) {
           final bookingData = response['data'];
@@ -276,13 +276,13 @@ class BookingCancellationController extends GetxController {
     }
 
     try {
-      final response = await bookingOperations.cancelBooking(bookingId);
+      final response = await apiService.cancelBooking(bookingId);
 
       if (kDebugMode) {
         print("Cancel booking response: $response");
       }
 
-      if (response != null && response['status'] == 'success') {
+      if (response['status'] == 'success') {
         Get.snackbar(
             'Success'.tr,
             'Your booking has been cancelled successfully'.tr,
@@ -294,7 +294,7 @@ class BookingCancellationController extends GetxController {
       } else {
         Get.snackbar(
             'Error'.tr,
-            response?['message'] ?? 'Failed to cancel booking'.tr,
+            response['message'] ?? 'Failed to cancel booking'.tr,
             snackPosition: SnackPosition.BOTTOM
         );
       }

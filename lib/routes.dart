@@ -1,5 +1,7 @@
+
 import 'package:easycut/core/constant/routes.dart';
 import 'package:easycut/core/middleware/my_middleware.dart';
+import 'package:easycut/test.dart';
 import 'package:easycut/view/screen/auth/activate_code.dart';
 import 'package:easycut/view/screen/auth/forget_password/forgot_password.dart';
 import 'package:easycut/view/screen/auth/forget_password/reset_password.dart';
@@ -111,5 +113,11 @@ List<GetPage<dynamic>>? routes = [
   GetPage(
     name: AppRoute.profileEdit,
     page: () => const ProfileEditScreen(),
+  ),
+
+  // ===================     API Testing    ======================
+  GetPage(
+    name: '/api_test',
+    page: () => const ApiTestScreen(),
   ),
 ];

@@ -4,16 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-import '../../core/shared/widgets/big_text.dart';
-import '../../core/shared/widgets/small_text.dart';
-import '../../data/data_source/remote/home/book_op.dart';
+import '../../api_services.dart';
 
 class BookingRatingController extends GetxController {
   final int bookingId;
 
   // Services
   final MyServices myServices = Get.find();
-  late BookingOperationsData bookingOperations;
+  late ApiService apiService;
 
   // State variables
   int serviceQualityRating = 0;
@@ -30,7 +28,7 @@ class BookingRatingController extends GetxController {
   BookingRatingController({
     required this.bookingId,
   }) {
-    bookingOperations = BookingOperationsData(Get.find());
+    apiService = ApiService();
   }
 
   void updateServiceQualityRating(int rating) {
@@ -59,7 +57,7 @@ class BookingRatingController extends GetxController {
     }
 
     try {
-      final response = await bookingOperations.submitBookingRating(
+      final response = await apiService.submitBookingRating(
         bookingId: bookingId,
         serviceQuality: serviceQualityRating,
         cleanliness: cleanlinessRating,
@@ -67,12 +65,12 @@ class BookingRatingController extends GetxController {
         comment: commentController.text,
       );
 
-      if (response != null && response['status'] == 'success') {
+      if (response['status'] == 'success') {
         _showRatingSuccessDialog();
       } else {
         Get.snackbar(
             'Error'.tr,
-            response?['message'] ?? 'Failed to submit rating'.tr,
+            response['message'] ?? 'Failed to submit rating'.tr,
             snackPosition: SnackPosition.BOTTOM
         );
       }
@@ -105,15 +103,15 @@ class BookingRatingController extends GetxController {
                 size: 50,
               ),
               const SizedBox(height: 20),
-              BigText(
-                text: "Thank You!".tr,
-                size: 18,
+              Text(
+                 "Thank You!".tr,
+
               ),
               const SizedBox(height: 15),
-              SmallText(
-                text: "Your feedback has been submitted successfully. We appreciate your time and input.".tr,
+              Text(
+                "Your feedback has been submitted successfully. We appreciate your time and input.".tr,
                 textAlign: TextAlign.center,
-                size: 14,
+
               ),
               const SizedBox(height: 25),
               ElevatedButton(
@@ -151,3 +149,4 @@ class BookingRatingController extends GetxController {
     super.onClose();
   }
 }
+

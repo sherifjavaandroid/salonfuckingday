@@ -1,3 +1,4 @@
+
 import 'package:easycut/core/constant/routes.dart';
 import 'package:easycut/core/services/services.dart';
 import 'package:easycut/data/model/booking_model.dart';
@@ -5,14 +6,14 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../data/data_source/remote/home/book_op.dart';
+import '../../api_services.dart';
 
 class BookingDetailController extends GetxController {
   final BookingModel booking;
 
   // Services
   final MyServices myServices = Get.find();
-  late BookingOperationsData bookingOperations;
+  late ApiService apiService;
 
   // State variables for booking actions
   bool canModifyBooking = false; // Can cancel or reschedule
@@ -23,7 +24,7 @@ class BookingDetailController extends GetxController {
   BookingDetailController({
     required this.booking,
   }) {
-    bookingOperations = BookingOperationsData(Get.find());
+    apiService = ApiService();
     _initializeController();
   }
 
@@ -91,15 +92,18 @@ class BookingDetailController extends GetxController {
 
   Future<void> _checkIfRated() async {
     try {
-      final response = await bookingOperations.checkBookingRated(
-        int.parse(booking.id.toString()),
-      );
+      final bookingId = int.parse(booking.id.toString());
+      final response = await apiService.checkBookingRated(bookingId);
 
-      if (response != null && response['status'] == 'success') {
+      if (response['status'] == 'success') {
         isAlreadyRated = response['is_rated'] == true;
 
         // Update canRateBooking based on whether it's already rated
         canRateBooking = canRateBooking && !isAlreadyRated;
+
+        if (kDebugMode) {
+          print("Booking rated status: $isAlreadyRated");
+        }
       }
     } catch (e) {
       if (kDebugMode) {

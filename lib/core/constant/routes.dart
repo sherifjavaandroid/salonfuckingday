@@ -24,4 +24,7 @@ class AppRoute {
   static const String bookingCancellation = "/bookingcancellation";
   static const String rescheduleBooking = "/reschedulebooking";
   static const String rateBooking = "/ratebooking";
+
+  // API testing route
+  static const String apiTest = "/api_test";
 }

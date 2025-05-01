@@ -56,9 +56,7 @@ class _BookingViewState extends State<BookingView> with WidgetsBindingObserver {
 
     controller.fetchBookingsFromApi();
 
-    if (kDebugMode) {
-      print('User ID is not available.');
-    }
+
   }
 
   bool _hasFetchedData = false;

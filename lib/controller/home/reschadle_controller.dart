@@ -5,7 +5,8 @@ import 'package:flutter/foundation.dart';
 import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
-import '../../data/data_source/remote/home/book_op.dart';
+import '../../api_services.dart';
+
 
 class RescheduleBookingController extends GetxController {
   final int bookingId;
@@ -13,7 +14,7 @@ class RescheduleBookingController extends GetxController {
 
   // Services
   final MyServices myServices = Get.find();
-  late BookingOperationsData bookingOperations;
+  late ApiService apiService;
   late BookingData bookingData;
 
   // State variables
@@ -28,7 +29,7 @@ class RescheduleBookingController extends GetxController {
     required this.bookingId,
     required this.salonId,
   }) {
-    bookingOperations = BookingOperationsData(Get.find());
+    apiService = ApiService();
     bookingData = BookingData(Get.find());
     if (kDebugMode) {
       print(
@@ -61,9 +62,6 @@ class RescheduleBookingController extends GetxController {
     update();
 
     try {
-      // Get user ID from shared preferences
-      final userId = myServices.sharedPreferences.getString('userId');
-
       // Fetch services associated with this booking to calculate duration
       final serviceIds = await _getBookingServiceIds();
 
@@ -81,7 +79,8 @@ class RescheduleBookingController extends GetxController {
         return;
       }
 
-      // Fetch available time slots from API
+      // Note: We're keeping the original booking data call for time slots
+      // since it appears to be a specialized endpoint not in our current API service
       availableTimeSlots = await bookingData.fetchAvailableTimes(
         salonId.toString(),
         selectedDate!,
@@ -110,13 +109,13 @@ class RescheduleBookingController extends GetxController {
 
   Future<List<String>> _getBookingServiceIds() async {
     try {
-      final response = await bookingOperations.getBookingServices(bookingId);
+      final response = await apiService.getBookingServices(bookingId);
 
       if (kDebugMode) {
         print("Booking services response: $response");
       }
 
-      if (response != null && response['status'] == 'success') {
+      if (response['status'] == 'success') {
         if (response['services'] != null && response['services'] is List) {
           return (response['services'] as List)
               .map((service) => service['service_id'].toString())
@@ -148,7 +147,7 @@ class RescheduleBookingController extends GetxController {
             "Rescheduling booking $bookingId to date: $selectedDate, time: $selectedTimeSlot");
       }
 
-      final response = await bookingOperations.rescheduleBooking(
+      final response = await apiService.rescheduleBooking(
         bookingId: bookingId,
         newDate: selectedDate!,
         newTime: selectedTimeSlot!,
@@ -158,7 +157,7 @@ class RescheduleBookingController extends GetxController {
         print("Reschedule response: $response");
       }
 
-      if (response != null && response['status'] == 'success') {
+      if (response['status'] == 'success') {
         Get.snackbar(
             'Success'.tr, 'Your booking has been rescheduled successfully'.tr,
             snackPosition: SnackPosition.BOTTOM);
@@ -167,7 +166,7 @@ class RescheduleBookingController extends GetxController {
         Get.offAllNamed(AppRoute.home);
       } else {
         Get.snackbar('Error'.tr,
-            response?['message'] ?? 'Failed to reschedule booking'.tr,
+            response['message'] ?? 'Failed to reschedule booking'.tr,
             snackPosition: SnackPosition.BOTTOM);
       }
     } catch (e) {
